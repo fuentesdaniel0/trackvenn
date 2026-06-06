@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #14141d;
+  --bg-glass: rgba(20, 20, 29, 0.6);
+  --bg-glass-hover: rgba(30, 30, 45, 0.8);
+  
+  --accent-primary: #a7f3d0;
+  --accent-hover: #6ee7b7;
+  --accent-gradient: linear-gradient(135deg, #34d399, #a7f3d0, #fef3c7);
+  
+  --accent-shadow: rgba(167, 243, 208, 0.4);
+  --accent-shadow-hover: rgba(167, 243, 208, 0.6);
+  --accent-bg-light: rgba(167, 243, 208, 0.15);
+  --accent-shadow-light: rgba(167, 243, 208, 0.2);
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border-glass: rgba(255, 255, 255, 0.1);
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6, .brand-font {
+  font-family: 'Outfit', sans-serif;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button {
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+/* --- New Premium Animations --- */
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 15px var(--accent-shadow);
+  }
+  50% {
+    box-shadow: 0 0 30px var(--accent-shadow-hover);
+  }
+  100% {
+    box-shadow: 0 0 15px var(--accent-shadow);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+/* Stagger Animations */
+.stagger-container > * {
+  --stagger-time: 0.1s;
+  animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+  /* Use JS fallback index first, then standard index */
+  animation-delay: calc(var(--sibling-index, 1) * var(--stagger-time));
+  animation-delay: calc(sibling-index() * var(--stagger-time));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stagger-container > *, .animate-fade-in-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+

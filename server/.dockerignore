@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+.env
+.sample_env
+certs
+vitest.config.js
+src/**/*.test.js
+.eslintrc.js
+.prettierrc.js
