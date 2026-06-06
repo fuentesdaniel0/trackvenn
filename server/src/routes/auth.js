@@ -10,7 +10,8 @@ const cookieConfig = {
   sameSite: 'none',
 }
 
-const clientUrl = process.env.CLIENT_URL || 'https://127.0.0.1:3000'
+const clientUrlStr = process.env.CLIENT_URL || 'https://127.0.0.1:3000'
+const clientUrl = clientUrlStr.split(',')[0]
 
 router.get('/auth', (req, res) => {
   const state = crypto.randomBytes(16).toString('hex')
