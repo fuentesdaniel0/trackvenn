@@ -15,7 +15,8 @@ A full-stack web application that calculates the intersection of multiple Spotif
 ## Key Features
 
 - **OAuth 2.0 Integration:** Securely authenticates users via Spotify.
-- **Library Intersections:** Fetches and compares thousands of tracks across multiple user libraries using advanced pagination and upstream API rate-limit handling.
+- **Library Intersections [Technical Implementation]:** Fetches and compares thousands of tracks across multiple user libraries using sequential, cursor-based pagination. To avoid O(N²) nested loops when comparing large libraries, it builds a Hash Set of the caller's track IDs for O(1) lookups, reducing the intersection algorithm's time complexity to O(N + M). 
+- **API Handling & Rate Limiting:** Implements aggressive IP-based token-bucket rate limiting (via `express-rate-limit`) on incoming requests to protect the upstream Spotify API quotas from being exhausted by malicious clients.
 - **"Demo Mode":** A seamless fallback mock-data system that allows guests and recruiters to experience the full application flow without needing explicit Spotify Developer App approval.
 - **Modern UI/UX:** A highly responsive, glassmorphic design featuring micro-animations, skeleton loaders, and a premium aesthetic.
 
@@ -57,3 +58,4 @@ A full-stack web application that calculates the intersection of multiple Spotif
    ```
    - **Frontend:** `http://127.0.0.1:3000`
    - **Backend API:** `https://127.0.0.1:8080`
+   *(Note: The local backend intentionally boots with self-signed SSL certificates via `https.createServer()` to ensure that secure cookies operate identically in both local and production environments without browser tracking protections silently blocking them).*
