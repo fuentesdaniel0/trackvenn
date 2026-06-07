@@ -5,21 +5,21 @@
 
 A full-stack web application that calculates the intersection of multiple Spotify libraries to generate shared, collaborative playlists. 
 
-## 🚀 Tech Stack
+## Tech Stack
 
 - **Frontend:** React, Emotion (CSS-in-JS)
 - **Backend:** Node.js, Express, Spotify Web API
 - **Infrastructure:** Google Cloud Run (Serverless), Docker, Nginx
 - **CI/CD:** GitHub Actions (Automated testing, linting, and zero-downtime deployment)
 
-## ✨ Key Features
+## Key Features
 
 - **OAuth 2.0 Integration:** Securely authenticates users via Spotify.
 - **Library Intersections:** Fetches and compares thousands of tracks across multiple user libraries using advanced pagination and upstream API rate-limit handling.
 - **"Demo Mode":** A seamless fallback mock-data system that allows guests and recruiters to experience the full application flow without needing explicit Spotify Developer App approval.
 - **Modern UI/UX:** A highly responsive, glassmorphic design featuring micro-animations, skeleton loaders, and a premium aesthetic.
 
-## 🏗 Architecture & DevOps
+## Architecture & DevOps
 
 **Trackvenn** was engineered with enterprise-grade best practices in mind:
 
@@ -29,7 +29,7 @@ A full-stack web application that calculates the intersection of multiple Spotif
   - **Continuous Deployment:** Implements a strict "fail-fast" deployment gate. If tests pass, GitHub Actions dynamically injects production environment variables, builds the frontend, and authenticates with GCP via an IAM Service Account to roll out new containers with zero downtime.
 - **Security First:** Implements HTTP-only secure cookies for session management, strict CORS policies, Helmet for secure HTTP headers, CSRF mitigation, and aggressive IP-based rate limiting to prevent upstream API blocking.
 
-## 💻 Local Development
+## Local Development
 
 1. **Clone the repo:**
    ```bash
