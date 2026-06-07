@@ -3,6 +3,7 @@ import { createPortal } from "react-dom"
 import axios from "axios"
 import styled from "@emotion/styled"
 import Tracks from "./Tracks"
+import { mockProfile, mockUsers, mockIntersectionTracks, mockHistory } from "../mocks/mockData"
 
 axios.defaults.headers.common["Content-Type"] = "application/json"
 axios.defaults.withCredentials = true
@@ -26,7 +27,7 @@ const Header = styled.div`
 
 const LoginButton = styled.a`
   display: inline-block;
-  background: var(--accent-primary);
+  background: #34d399; /* Creamy mint green, darker than the original #a7f3d0 */
   color: #ffffff;
   text-decoration: none;
   font-weight: 800;
@@ -34,11 +35,12 @@ const LoginButton = styled.a`
   padding: 15px 40px;
   border-radius: 30px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px var(--accent-shadow);
+  box-shadow: 0 4px 15px rgba(52, 211, 153, 0.4);
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px var(--accent-shadow-hover);
+    background: #6ee7b7; /* Lighter mint on hover */
+    box-shadow: 0 6px 20px rgba(110, 231, 183, 0.6);
   }
 `
 
@@ -229,6 +231,7 @@ const AnalyzingContainer = styled.div`
 `
 
 export default function Home() {
+  const [isDemoMode, setIsDemoMode] = useState(false)
   const [isAuthorized, setIsAuthorized] = useState(false)
   const [authLoading, setAuthLoading] = useState(true)
   const [authLink, setAuthLink] = useState("")
@@ -286,6 +289,18 @@ export default function Home() {
   }, [])
 
   const handleHostSession = async () => {
+    if (isDemoMode) {
+      const defaultName = profile?.display_name || profile?.id || "My Set"
+      const displayName = window.prompt("Enter a name to be found as:", defaultName)
+      if (!displayName) return
+      setCurrentView("host_waiting")
+      setTimeout(() => {
+        setIntersectionWith("Bob (Demo)")
+        setIntersectionTracks(mockIntersectionTracks)
+        setCurrentView("results")
+      }, 5000)
+      return
+    }
     const defaultName = profile?.display_name || profile?.id || "My Set"
     const displayName = window.prompt("Enter a name to be found as:", defaultName)
     if (!displayName) return // user cancelled
@@ -300,6 +315,17 @@ export default function Home() {
   }
 
   const handleSelectHost = async (hostId) => {
+    if (isDemoMode) {
+      const hostUser = availableUsers.find(u => u.id === hostId)
+      setIntersectionWith(hostUser ? hostUser.displayName : hostId)
+      setCurrentView("analyzing")
+      setTimeout(() => {
+        setExportUrl("")
+        setIntersectionTracks(mockIntersectionTracks)
+        setCurrentView("results")
+      }, 1500)
+      return
+    }
     const hostUser = availableUsers.find(u => u.id === hostId)
     setIntersectionWith(hostUser ? hostUser.displayName : hostId)
     setCurrentView("analyzing")
@@ -324,6 +350,10 @@ export default function Home() {
   }
 
   const handleEndSession = async () => {
+    if (isDemoMode) {
+      setCurrentView("role_selection")
+      return
+    }
     try {
       await axios.delete(uri + `tracks/host?callerId=${profile?.id}`)
       setCurrentView("role_selection")
@@ -335,6 +365,11 @@ export default function Home() {
   }
 
   const handleViewHistory = async () => {
+    if (isDemoMode) {
+      setHistoryTracks(mockHistory)
+      setCurrentView("history")
+      return
+    }
     try {
       const { data } = await axios.get(uri + `tracks/history/${profile.id}`)
       setHistoryTracks(data)
@@ -347,6 +382,10 @@ export default function Home() {
 
   const handleClearHistory = async () => {
     if (!window.confirm("Are you sure you want to clear your entire session history?")) return;
+    if (isDemoMode) {
+      setHistoryTracks([])
+      return
+    }
     try {
       await axios.delete(uri + `tracks/history/${profile.id}`)
       setHistoryTracks([])
@@ -357,6 +396,10 @@ export default function Home() {
 
   const handleDeleteMatch = async (e, timestamp) => {
     e.stopPropagation(); // prevent opening the match
+    if (isDemoMode) {
+      setHistoryTracks(prev => prev.filter(h => h.timestamp !== timestamp))
+      return
+    }
     try {
       await axios.delete(uri + `tracks/history/${profile.id}/${timestamp}`)
       setHistoryTracks(prev => prev.filter(h => h.timestamp !== timestamp))
@@ -368,6 +411,7 @@ export default function Home() {
   // Host Polling Logic
   useEffect(() => {
     let interval = null;
+    if (isDemoMode) return;
     if (currentView === "host_waiting" && profile?.id) {
       interval = setInterval(async () => {
         try {
@@ -409,7 +453,7 @@ export default function Home() {
   }, [profile?.id])
 
   const handleRefreshLibrary = async () => {
-    if (refreshing) return;
+    if (refreshing || isDemoMode) return;
     setRefreshing(true);
     try {
       const { data } = await axios.get(uri + "tracks?refresh=true")
@@ -423,6 +467,7 @@ export default function Home() {
   }
 
   const handleRefreshUsers = async () => {
+    if (isDemoMode) return;
     try {
       const usersRes = await axios.get(uri + `tracks/users?t=${Date.now()}`)
       setAvailableUsers(usersRes.data.filter(u => u.id !== profile?.id))
@@ -432,6 +477,15 @@ export default function Home() {
   }
 
   const handleLogout = async () => {
+    if (isDemoMode) {
+      setIsDemoMode(false)
+      setProfile(null)
+      setIsAuthorized(false)
+      setIntersectionTracks([])
+      setIntersectionWith("")
+      setCurrentView("role_selection")
+      return
+    }
     try {
       if (profile?.id) {
         await axios.delete(uri + `tracks/host?callerId=${profile.id}`).catch(() => {})
@@ -548,7 +602,7 @@ export default function Home() {
             </ActionButton>
             <h3 style={{ display: 'inline-block' }}>Found {intersectionTracks.length} tracks in common with {intersectionWith}!</h3>
           </div>
-          {!exportUrl ? (
+          {!exportUrl && !isDemoMode ? (
             <ActionButton 
               onClick={handleExportPlaylist} 
               disabled={exporting}
@@ -556,11 +610,11 @@ export default function Home() {
             >
               {exporting ? "Exporting..." : "Export to Spotify"}
             </ActionButton>
-          ) : (
+          ) : exportUrl && !isDemoMode ? (
             <a href={exportUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', fontWeight: 'bold' }}>
               View Playlist on Spotify ↗
             </a>
-          )}
+          ) : null}
         </div>
         <Tracks trackList={intersectionTracks} />
       </div>
@@ -656,6 +710,17 @@ export default function Home() {
         <div style={{ textAlign: 'center', marginTop: '40px' }}>
           {error && <p style={{ color: '#ff4444', fontWeight: 'bold', marginBottom: '20px' }}>Error connecting to backend: {error}. Check your browser console.</p>}
           {authLink && <LoginButton href={authLink}>Connect Spotify</LoginButton>}
+          <div style={{ marginTop: '20px' }}>
+            <ActionButton onClick={() => {
+              setIsDemoMode(true)
+              setIsAuthorized(true)
+              setProfile(mockProfile)
+              setAvailableUsers(mockUsers)
+              setCurrentView("role_selection")
+            }} style={{ background: 'transparent', border: '1px solid var(--accent-primary)', color: 'var(--accent-primary)' }}>
+              Try Demo Version
+            </ActionButton>
+          </div>
           {!authLink && !error && <p>Loading connection...</p>}
         </div>
       ) : (

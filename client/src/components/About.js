@@ -49,6 +49,15 @@ const AboutContainer = styled.div`
     color: var(--accent-primary);
     font-weight: 600;
   }
+  a {
+    color: var(--accent-primary);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
 `
 
 function About() {
@@ -61,14 +70,20 @@ function About() {
       
       <h3>How It Works</h3>
       <ul>
-        <li><strong>Connect:</strong> Link your Spotify account.</li>
-        <li><strong>Intersect:</strong> Compare libraries to locate common tracks.</li>
-        <li><strong>Export:</strong> Save the resulting shared tracks directly as a new playlist.</li>
+        <li><strong>Host:</strong> One person logs in and starts a hosting session.</li>
+        <li><strong>Join:</strong> A friend joins the session and connects their Spotify account.</li>
+        <li><strong>Intersect:</strong> The app compares both users' "Liked Songs" libraries to find the exact track overlap.</li>
+        <li><strong>Export:</strong> View the results in a Venn diagram and save the shared tracks as a new playlist!</li>
       </ul>
 
       <h3>Privacy & Process</h3>
       <p>
         Authentication is handled securely through Spotify. We read your Liked Songs exclusively to compute library intersections. Your data is used strictly for this calculation and is never stored, sold, or shared beyond the active session.
+      </p>
+
+      <h3>Open Source</h3>
+      <p>
+        trackvenn is open source! Feel free to check out the code, report issues, or contribute on <a href="https://github.com/fuentesdaniel0/trackvenn" target="_blank" rel="noopener noreferrer">GitHub</a>.
       </p>
     </AboutContainer>
   )
