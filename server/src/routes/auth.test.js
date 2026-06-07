@@ -34,8 +34,8 @@ describe('Auth Routes', () => {
       )
       expect(stateCookie).toBeDefined()
       expect(stateCookie).toContain('HttpOnly')
-      expect(stateCookie).toContain('Secure')
-      expect(stateCookie).toContain('SameSite=None')
+      // secure is only true in production, sameSite is now lax
+      expect(stateCookie).toContain('SameSite=Lax')
     })
   })
 

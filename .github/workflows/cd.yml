@@ -60,9 +60,11 @@ jobs:
         working-directory: ./client
         run: |
           npm ci --legacy-peer-deps
-          export REACT_APP_API_URL=$(gcloud run services describe trackvenn-server --region us-central1 --project trackvenn --format 'value(status.url)')/
-          echo "Server URL: $REACT_APP_API_URL"
-          CI=true REACT_APP_API_URL=$REACT_APP_API_URL npm run build
+          # We proxy /api/ to the backend Cloud Run service in nginx.conf
+          # so we can use a relative URL for the frontend API calls.
+          export SERVER_URL=$(gcloud run services describe trackvenn-server --region us-central1 --project trackvenn --format 'value(status.url)')/
+          echo "Server URL: $SERVER_URL"
+          CI=true REACT_APP_API_URL=/api/ npm run build
 
       - name: Deploy Client to Cloud Run
         run: |

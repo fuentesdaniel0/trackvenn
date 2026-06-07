@@ -5,8 +5,8 @@ const dataStore = require('../services/DataStore')
 
 const cookieConfig = {
   httpOnly: true,
-  secure: true,
-  sameSite: 'none',
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax',
 }
 
 const enforceUserAuth = (req, res, next) => {

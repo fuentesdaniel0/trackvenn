@@ -2,8 +2,8 @@ const spotifyService = require('../services/SpotifyService')
 
 const cookieConfig = {
   httpOnly: true,
-  secure: true,
-  sameSite: 'none',
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax',
 }
 
 const refreshTokenMiddleware = async (req, res, next) => {

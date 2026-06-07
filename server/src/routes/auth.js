@@ -6,8 +6,8 @@ const router = Router()
 
 const cookieConfig = {
   httpOnly: true,
-  secure: true,
-  sameSite: 'none',
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax',
 }
 
 const clientUrlStr = process.env.CLIENT_URL || 'https://127.0.0.1:3000'
