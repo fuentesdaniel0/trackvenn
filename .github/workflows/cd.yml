@@ -1,0 +1,55 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-server:
+    name: Deploy Server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy Server to Cloud Run
+        run: |
+          gcloud run deploy spotter-server \
+            --source ./server \
+            --region us-central1 \
+            --project dev-station-0 \
+            --allow-unauthenticated
+
+  deploy-client:
+    name: Deploy Client
+    runs-on: ubuntu-latest
+    # Wait for the server to finish deploying so we don't accidentally deploy if the server breaks
+    needs: deploy-server
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy Client to Cloud Run
+        run: |
+          gcloud run deploy spotter-client \
+            --source ./client \
+            --region us-central1 \
+            --project dev-station-0 \
+            --allow-unauthenticated
