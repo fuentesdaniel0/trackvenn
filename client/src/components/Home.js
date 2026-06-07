@@ -240,7 +240,6 @@ export default function Home() {
   const [availableUsers, setAvailableUsers] = useState([])
   const [intersectionWith, setIntersectionWith] = useState("")
   const [intersectionTracks, setIntersectionTracks] = useState([])
-  const [loadingIntersection, setLoadingIntersection] = useState(false)
   const [exporting, setExporting] = useState(false)
   const [exportUrl, setExportUrl] = useState("")
 
@@ -408,14 +407,16 @@ export default function Home() {
     }
   }
 
+  const profileId = profile?.id;
+
   // Host Polling Logic
   useEffect(() => {
     let interval = null;
     if (isDemoMode) return;
-    if (currentView === "host_waiting" && profile?.id) {
+    if (currentView === "host_waiting" && profileId) {
       interval = setInterval(async () => {
         try {
-          const { data } = await axios.get(uri + `tracks/matches/${profile.id}`)
+          const { data } = await axios.get(uri + `tracks/matches/${profileId}`)
           if (data && data.tracks && data.tracks.length > 0) {
             // Found a match!
             setIntersectionWith(data.callerDisplayName || data.callerId) // The person who matched with us
@@ -430,14 +431,14 @@ export default function Home() {
     return () => {
       if (interval) clearInterval(interval)
     }
-  }, [currentView, profile?.id])
+  }, [currentView, isDemoMode, profileId])
 
   // Browser Navigation / Tab Close Teardown
   useEffect(() => {
     const handleUnload = () => {
-      if (profile?.id) {
+      if (profileId) {
         // Use fetch with keepalive to reliably send the DELETE request as the tab closes
-        fetch(uri + `tracks/host?callerId=${profile.id}`, {
+        fetch(uri + `tracks/host?callerId=${profileId}`, {
           method: 'DELETE',
           keepalive: true
         }).catch(() => {})
@@ -450,7 +451,7 @@ export default function Home() {
       window.removeEventListener("beforeunload", handleUnload)
       window.removeEventListener("unload", handleUnload)
     }
-  }, [profile?.id])
+  }, [profileId])
 
   const handleRefreshLibrary = async () => {
     if (refreshing || isDemoMode) return;
