@@ -3,59 +3,38 @@
 [![Live Demo](https://img.shields.io/badge/Live%20App-venn.tools-34d399?style=flat-square)](https://venn.tools)
 [![CI/CD](https://github.com/fuentesdaniel0/trackvenn/actions/workflows/cd.yml/badge.svg)](https://github.com/fuentesdaniel0/trackvenn/actions)
 
-A full-stack web application that calculates the intersection of multiple Spotify libraries to generate shared, collaborative playlists. 
+A full-stack web app that calculates the intersection of Spotify libraries to generate shared playlists.
 
 ## Tech Stack
-
-- **Frontend:** React, Emotion (CSS-in-JS)
+- **Frontend:** React, Emotion
 - **Backend:** Node.js, Express, Spotify Web API
-- **Infrastructure:** Google Cloud Run (Serverless), Docker, Nginx
-- **CI/CD:** GitHub Actions (Automated testing, linting, and zero-downtime deployment)
+- **Infrastructure:** Google Cloud Run, Docker, Nginx, GitHub Actions
 
-## Key Features
+## Technical Highlights
+- **O(N + M) Intersections:** Fetches libraries via sequential pagination and utilizes a Hash Set for O(1) lookups to compute large intersections instantly.
+- **Microservices & CI/CD:** Frontend and backend are decoupled Docker containers deployed to Cloud Run. GitHub Actions handles automated testing and zero-downtime deployments.
+- **Robust Security:** Implements HTTP-only `SameSite=Lax` cookies via Nginx reverse proxy, aggressive token-bucket rate limiting, Helmet headers, and CSRF mitigation.
+- **Demo Mode:** A seamless mock-data fallback allows guests to explore the UI without Spotify Auth.
 
-- **OAuth 2.0 Integration:** Securely authenticates users via Spotify.
-- **Library Intersections [Technical Implementation]:** Fetches and compares thousands of tracks across multiple user libraries using sequential, cursor-based pagination. To avoid O(N²) nested loops when comparing large libraries, it builds a Hash Set of the caller's track IDs for O(1) lookups, reducing the intersection algorithm's time complexity to O(N + M). 
-- **API Handling & Rate Limiting:** Implements aggressive IP-based token-bucket rate limiting (via `express-rate-limit`) on incoming requests to protect the upstream Spotify API quotas from being exhausted by malicious clients.
-- **"Demo Mode":** A seamless fallback mock-data system that allows guests and recruiters to experience the full application flow without needing explicit Spotify Developer App approval.
-- **Modern UI/UX:** A highly responsive, glassmorphic design featuring micro-animations, skeleton loaders, and a premium aesthetic.
+## Local Setup
 
-## Architecture & DevOps
+```bash
+git clone https://github.com/fuentesdaniel0/trackvenn.git
+cd trackvenn
+npm install
+```
 
-**Trackvenn** was engineered with enterprise-grade best practices in mind:
+Create `server/.env`:
+```env
+CLIENT_ID=your_spotify_client_id
+CLIENT_SECRET=your_spotify_client_secret
+COOKIE_SECRET=your_random_secret_string
+```
 
-- **Microservice Design:** The React client and Node.js server are containerized into separate Docker images and deployed as independent serverless microservices on Google Cloud Run. This ensures clear separation of concerns and independent auto-scaling under load.
-- **Strict CI/CD Pipelines:** 
-  - **Continuous Integration:** Every push runs automated Vitest suites and ESLint checks. 
-  - **Continuous Deployment:** Implements a strict "fail-fast" deployment gate. If tests pass, GitHub Actions dynamically injects production environment variables, builds the frontend, and authenticates with GCP via an IAM Service Account to roll out new containers with zero downtime.
-- **Security First:** Implements HTTP-only secure cookies for session management, strict CORS policies, Helmet for secure HTTP headers, CSRF mitigation, and aggressive IP-based rate limiting to prevent upstream API blocking.
+Run both apps concurrently:
+```bash
+npm start
+```
 
-## Local Development
-
-1. **Clone the repo:**
-   ```bash
-   git clone https://github.com/fuentesdaniel0/trackvenn.git
-   cd trackvenn
-   ```
-
-2. **Install dependencies:**
-   *(A postinstall script will automatically install both client and server dependencies)*
-   ```bash
-   npm install
-   ```
-
-3. **Configure environments:**
-   Create a `.env` file inside the `server/` directory:
-   ```env
-   CLIENT_ID=your_spotify_client_id
-   CLIENT_SECRET=your_spotify_client_secret
-   COOKIE_SECRET=your_random_secret_string
-   ```
-
-4. **Start the local dev environment:**
-   ```bash
-   npm start
-   ```
-   - **Frontend:** `http://127.0.0.1:3000`
-   - **Backend API:** `https://127.0.0.1:8080`
-   *(Note: The local backend intentionally boots with self-signed SSL certificates via `https.createServer()` to ensure that secure cookies operate identically in both local and production environments without browser tracking protections silently blocking them).*
+- **Frontend:** `http://127.0.0.1:3000`
+- **Backend:** `https://127.0.0.1:8080` *(Uses self-signed SSL to ensure secure cookies mirror production).*
