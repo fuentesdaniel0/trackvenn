@@ -31,3 +31,6 @@ web-api-auth-examples
 /client/icons
 .agents
 server/certs
+
+# private
+INTERVIEW_PREP.md
