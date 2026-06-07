@@ -540,18 +540,18 @@ export default function Home() {
         onClick={handleHostSession}
       >
         <h3>Host</h3>
-        <p>{startingHost ? "Preparing your library..." : "Let friends select you to see your shared tracks."}</p>
+        <p>{startingHost ? "Preparing your library..." : "Broadcast your library."}</p>
       </div>
       <div className="role-card" style={{ "--sibling-index": 2 }} onClick={() => {
         handleRefreshUsers();
         setCurrentView("guest_selection");
       }}>
         <h3>Find</h3>
-        <p>Select a friend to view your music overlap.</p>
+        <p>Calculate shared tracks.</p>
       </div>
       <div className="role-card" style={{ "--sibling-index": 3 }} onClick={handleViewHistory}>
         <h3>History</h3>
-        <p>View past Venns with your friends.</p>
+        <p>View past matches.</p>
       </div>
     </RoleContainer>
   )
@@ -714,7 +714,8 @@ export default function Home() {
       )}
 
       <Header>
-        <h1>Create playlists from the exact intersection of your music libraries.</h1>
+        <h1>Sync libraries.</h1>
+        <p style={{ fontSize: '24px', color: 'var(--text-secondary)', marginTop: '10px' }}>Discover your musical overlap.</p>
       </Header>
 
       {!isAuthorized ? (

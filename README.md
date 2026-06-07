@@ -6,15 +6,17 @@
 A full-stack web app that calculates the intersection of Spotify libraries to generate shared playlists.
 
 ## Tech Stack
-- **Frontend:** React, Emotion
-- **Backend:** Node.js, Express, Spotify Web API
-- **Infrastructure:** Google Cloud Run, Docker, Nginx, GitHub Actions
+
+* **Frontend:** React, Emotion
+* **Backend:** Node.js, Express, Spotify Web API
+* **Infrastructure:** Google Cloud Run, Docker, Nginx, GitHub Actions
 
 ## Technical Highlights
-- **O(N + M) Intersections:** Fetches libraries via sequential pagination and utilizes a Hash Set for O(1) lookups to compute large intersections instantly.
-- **Microservices & CI/CD:** Frontend and backend are decoupled Docker containers deployed to Cloud Run. GitHub Actions handles automated testing and zero-downtime deployments.
-- **Robust Security:** Implements HTTP-only `SameSite=Lax` cookies via Nginx reverse proxy, aggressive token-bucket rate limiting, Helmet headers, and CSRF mitigation.
-- **Demo Mode:** A seamless mock-data fallback allows guests to explore the UI without Spotify Auth.
+
+* **O(N + M) Intersections:** Fetches libraries via sequential pagination and utilizes a Hash Set for O(1) lookups to compute large intersections instantly.
+* **Microservices & CI/CD:** Frontend and backend are decoupled Docker containers deployed to Cloud Run. GitHub Actions handles automated testing and zero-downtime deployments.
+* **Robust Security:** Implements HTTP-only `SameSite=Lax` cookies via Nginx reverse proxy, aggressive token-bucket rate limiting, Helmet headers, and CSRF mitigation.
+* **Demo Mode:** A seamless mock-data fallback allows guests to explore the UI without Spotify Auth.
 
 ## Local Setup
 
@@ -25,6 +27,7 @@ npm install
 ```
 
 Create `server/.env`:
+
 ```env
 CLIENT_ID=your_spotify_client_id
 CLIENT_SECRET=your_spotify_client_secret
@@ -32,6 +35,7 @@ COOKIE_SECRET=your_random_secret_string
 ```
 
 Run both apps concurrently:
+
 ```bash
 npm start
 ```

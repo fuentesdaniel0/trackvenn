@@ -63,27 +63,25 @@ const AboutContainer = styled.div`
 function About() {
   return (
     <AboutContainer>
-      <h2>About <span className="highlight">trackvenn</span></h2>
-      <p>
-        trackvenn identifies the exact overlap between your Spotify Liked Songs and your friends' libraries.
-      </p>
+      <h3>About trackvenn</h3>
+      <p>trackvenn calculates the exact overlap between your Spotify Liked Songs and a friend's library.</p>
       
       <h3>How It Works</h3>
       <ul>
-        <li><strong>Host:</strong> One person logs in and starts a hosting session.</li>
-        <li><strong>Join:</strong> A friend joins the session and connects their Spotify account.</li>
-        <li><strong>Intersect:</strong> The app compares both users' "Liked Songs" libraries to find the exact track overlap.</li>
-        <li><strong>Export:</strong> View the results in a Venn diagram and save the shared tracks as a new playlist!</li>
+        <li><strong>Host:</strong> Start a session to broadcast your library.</li>
+        <li><strong>Join:</strong> Connect your Spotify account to an active host.</li>
+        <li><strong>Intersect:</strong> Calculate the exact track overlap between both libraries.</li>
+        <li><strong>Export:</strong> Generate a new shared playlist directly to your Spotify account.</li>
       </ul>
 
       <h3>Privacy & Process</h3>
       <p>
-        Authentication is handled securely through Spotify. We read your Liked Songs exclusively to compute library intersections. Your data is used strictly for this calculation and is never stored, sold, or shared beyond the active session.
+        Authentication is handled securely via OAuth 2.0 through Spotify. We read your Liked Songs exclusively to compute the intersection. Data is processed entirely in memory for the active session and is never stored, sold, or shared.
       </p>
 
       <h3>Open Source</h3>
       <p>
-        trackvenn is open source! Feel free to check out the code, report issues, or contribute on <a href="https://github.com/fuentesdaniel0/trackvenn" target="_blank" rel="noopener noreferrer">GitHub</a>.
+        trackvenn is open source. Review the code, report issues, or contribute on <a href="https://github.com/fuentesdaniel0/trackvenn" target="_blank" rel="noopener noreferrer">GitHub</a>.
       </p>
     </AboutContainer>
   )
