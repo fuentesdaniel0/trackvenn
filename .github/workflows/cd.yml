@@ -46,6 +46,19 @@ jobs:
       - name: Setup Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22.x'
+
+      - name: Build React App
+        working-directory: ./client
+        run: |
+          npm ci --legacy-peer-deps
+          export REACT_APP_API_URL=$(gcloud run services describe spotter-server --region us-central1 --project dev-station-0 --format 'value(status.url)')/
+          echo "Server URL: $REACT_APP_API_URL"
+          CI=true REACT_APP_API_URL=$REACT_APP_API_URL npm run build
+
       - name: Deploy Client to Cloud Run
         run: |
           gcloud run deploy spotter-client \
