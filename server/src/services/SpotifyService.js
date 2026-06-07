@@ -5,7 +5,7 @@ class SpotifyService {
     this.credentials = {
       clientId: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      redirectUri: process.env.REDIRECT_URI || `https://127.0.0.1:${process.env.SERVER_PORT || 8080}/callback`,
+      redirectUri: process.env.REDIRECT_URI || (process.env.CLIENT_URL ? `${process.env.CLIENT_URL.split(',')[0]}/api/callback` : `https://127.0.0.1:${process.env.SERVER_PORT || 8080}/callback`),
     }
   }
 
