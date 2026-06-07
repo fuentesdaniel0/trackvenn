@@ -249,6 +249,7 @@ export default function Home() {
   // Views: 'role_selection' | 'host_waiting' | 'guest_selection' | 'analyzing' | 'results' | 'history'
   const [historyTracks, setHistoryTracks] = useState([])
   const [refreshing, setRefreshing] = useState(false)
+  const [startingHost, setStartingHost] = useState(false)
   const [portalNode, setPortalNode] = useState(null)
 
   useEffect(() => {
@@ -292,10 +293,11 @@ export default function Home() {
       const defaultName = profile?.display_name || profile?.id || "My Set"
       const displayName = window.prompt("Enter a name to be found as:", defaultName)
       if (!displayName) return
-      setCurrentView("host_waiting")
+      setStartingHost(true)
       setTimeout(() => {
         setIntersectionWith("Bob (Demo)")
         setIntersectionTracks(mockIntersectionTracks)
+        setStartingHost(false)
         setCurrentView("results")
       }, 5000)
       return
@@ -304,12 +306,15 @@ export default function Home() {
     const displayName = window.prompt("Enter a name to be found as:", defaultName)
     if (!displayName) return // user cancelled
     try {
+      setStartingHost(true)
       const { data } = await axios.post(uri + "tracks/save-host", { callerId: profile?.id, displayName })
       setAvailableUsers(data.users.filter(u => u.id !== profile?.id))
       setCurrentView("host_waiting")
     } catch (e) {
       console.error("Failed to save host data:", e)
       alert("Failed to start host session.")
+    } finally {
+      setStartingHost(false)
     }
   }
 
@@ -529,9 +534,13 @@ export default function Home() {
 
   const renderRoleSelection = () => (
     <RoleContainer className="stagger-container">
-      <div className="role-card" style={{ "--sibling-index": 1 }} onClick={handleHostSession}>
+      <div 
+        className="role-card" 
+        style={{ "--sibling-index": 1, opacity: startingHost ? 0.7 : 1, pointerEvents: startingHost ? 'none' : 'auto' }} 
+        onClick={handleHostSession}
+      >
         <h3>Host</h3>
-        <p>Let friends select you to see your shared tracks.</p>
+        <p>{startingHost ? "Preparing your library..." : "Let friends select you to see your shared tracks."}</p>
       </div>
       <div className="role-card" style={{ "--sibling-index": 2 }} onClick={() => {
         handleRefreshUsers();
@@ -654,7 +663,7 @@ export default function Home() {
                   setExportUrl("");
                   setCurrentView("results");
                 }}
-                style={{ position: 'relative', "--sibling-index": i + 1 }}
+                style={{ position: 'relative', "--sibling-index": i + 1, maxWidth: '100%' }}
               >
                 <div 
                   onClick={(e) => handleDeleteMatch(e, h.timestamp)}
@@ -664,14 +673,15 @@ export default function Home() {
                     right: '15px',
                     fontSize: '20px',
                     color: 'var(--text-secondary)',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    zIndex: 2
                   }}
                   title="Delete match"
                 >
                   &times;
                 </div>
-                <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Matched with</div>
-                <div style={{ fontSize: '20px', margin: '10px 0' }}>{partnerName || partnerId}</div>
+                <div style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '10px' }}>Matched with</div>
+                <div style={{ fontSize: '20px', margin: '10px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', padding: '0 10px' }}>{partnerName || partnerId}</div>
                 <div style={{ color: 'var(--accent-primary)' }}>{h.count} tracks</div>
               </div>
             )
